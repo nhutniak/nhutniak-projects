@@ -12,6 +12,25 @@ import android.widget.EditText;
 
 public class OhSnap365 extends Activity {
 	EditText helloName;
+	
+
+	private final static String SEPARATOR = "+";
+	private final static String PREFIX = "snap";
+	private final static String SUFFIX = "@ohsnap365.com";
+	
+	private String composeEmailString()
+	{
+		StringBuffer buff = new StringBuffer();
+		buff.append(PREFIX);
+		buff.append(SEPARATOR);
+		buff.append(getLoginEditText().getText().toString());
+		buff.append(SEPARATOR);
+		buff.append(getSecretWordEditText().getText().toString());
+		buff.append(SUFFIX);
+		
+		return buff.toString();
+	}
+	
 	private OnClickListener m_addListener = new OnClickListener() {
 
 		@Override
@@ -19,11 +38,10 @@ public class OhSnap365 extends Activity {
 			Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
 			emailIntent.setType("plain/text");
 			
-			String[] string = { "ironchest01@hotmail.com" };
-			emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, string);
-
-			emailIntent.putExtra(android.content.Intent.EXTRA_TEXT,
-					"Testing the caption out!");
+			String[] emails = new String[] { composeEmailString(), };
+			emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, emails );
+			
+			emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, getImageCaptionEditText().getText().toString() );
 
 			Uri uri = getImageUri();
 			if (null != uri) {
@@ -74,7 +92,7 @@ public class OhSnap365 extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		Button button = (Button) findViewById(R.id.go);
+		Button button = (Button) findViewById(R.id.launchEmailer);
 
 		button.setOnClickListener(m_addListener);
 		
@@ -82,11 +100,22 @@ public class OhSnap365 extends Activity {
 		Log.println(Log.INFO, "URI:", Boolean.toString(null == uri) );
 	}
 
+	private EditText getLoginEditText() {
+		return (EditText) findViewById(R.id.login);
+	}
+
+	private EditText getSecretWordEditText() {
+		return (EditText) findViewById(R.id.secretword);
+	}
+
+	private EditText getImageCaptionEditText() {
+		return (EditText) findViewById(R.id.caption);
+	}
 	
 	
 	@Override
 	public void finish() {
-		Button button = (Button) findViewById(R.id.go);
+		Button button = (Button) findViewById(R.id.launchEmailer);
 
 		button.setOnClickListener(null);
 
