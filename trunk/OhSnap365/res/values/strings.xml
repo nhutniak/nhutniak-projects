@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, OhSnap365!</string>
+    <string name="app_name">OhSnap365</string>
+    <string name="launchEmailer">Send</string>
+    <string name="helloName">Welcome to </string>
+    
+    <string name="logintv">login:</string>
+    <string name="secretwordtv">secret word:</string>
+    <string name="captiontv">Image caption:</string>
+    
+    <string id="@appEmailTag" name="appEmailTag">Send to OhSnap365 using:</string>
+    
+    <string name="changeSecretword">Change secret word</string>
+    <string name="useDate">Use a different date</string>
+    <string name="captionChange">Change the caption</string>
+    <string name="rotate">Rotate 90 degrees</string>
+    <string name="join">Join fun group</string>
+    <string name="leave">Leave fun group</string>
+    <string name="subscribe">Subscribe to fun group</string>
+    <string name="unsubscribe">Un-subscribes from fun group</string>
+    <string name="commentsOn">Comments on</string>
+    <string name="commentsOff">Comments off</string>
+    <string name="reminderOn">Reminder on</string>
+    <string name="reminderOff">Reminder off</string>
+</resources>

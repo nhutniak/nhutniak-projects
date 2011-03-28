@@ -1,6 +1,9 @@
 package com.nhutniak.ohsnap365;
 
-import android.app.Activity;
+import java.sql.SQLException;
+import java.util.List;
+
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,9 +13,23 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class OhSnap365 extends Activity {
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.android.apptools.OpenHelperManager.SqliteOpenHelperFactory;
+import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
+import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.dao.Dao;
+import com.nhutniak.ohsnap365.persistence.DatabaseHelper;
+
+public class OhSnap365 extends OrmLiteBaseActivity<DatabaseHelper> {
 	EditText helloName;
 	
+	static {
+		OpenHelperManager.setOpenHelperFactory(new SqliteOpenHelperFactory() {
+			public OrmLiteSqliteOpenHelper getHelper(Context context) {
+				return new DatabaseHelper(context);
+			}
+		});
+	}
 
 	private final static String SEPARATOR = "+";
 	private final static String PREFIX = "snap";
@@ -35,6 +52,14 @@ public class OhSnap365 extends Activity {
 
 		@Override
 		public void onClick(View v) {
+			try {
+				Dao<User, String> userDao = getHelper().getDao(User.class);
+				
+				userDao.create(new User(getLoginEditText().getText().toString(), getSecretWordEditText().getText().toString()));
+			} catch (SQLException e) {
+				Log.e(getClass().getName(), "Could not load database", e);
+			}
+			
 			Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
 			emailIntent.setType("plain/text");
 			
@@ -98,6 +123,30 @@ public class OhSnap365 extends Activity {
 		
 		Uri uri = getImageUri();
 		Log.println(Log.INFO, "URI:", Boolean.toString(null == uri) );
+		
+		try {
+			Dao<User, String> simpleDao = getHelper().getDao(User.class);
+			
+			List<User> queryForAll = simpleDao.queryForAll();
+			
+			EditText login = getLoginEditText();
+			EditText secretWord = getSecretWordEditText();
+			
+			if( 1 == queryForAll.size() )
+			{
+				User user = queryForAll.get(0);
+				login.setText(user.getLogin());
+				secretWord.setText(user.getSecretWord());
+			}
+			else
+			{
+				login.setText("");
+				secretWord.setText("");
+			}
+		} catch (SQLException e) {
+			Log.e(getClass().getName(), "Database exception", e);
+			return;
+		}
 	}
 
 	private EditText getLoginEditText() {
