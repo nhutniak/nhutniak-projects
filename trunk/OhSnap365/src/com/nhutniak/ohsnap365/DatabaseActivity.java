@@ -81,7 +81,7 @@ public class DatabaseActivity {
 			Dao<User, String> simpleDao = getHelper().getUserDao();
 			List<User> queryForAll = simpleDao.queryForAll();
 
-			if (1 >= queryForAll.size()) {
+			if (queryForAll.size() >= 1) {
 				// Hardwire this to always return the first result for now...
 				user = queryForAll.get(0);
 			} else {
