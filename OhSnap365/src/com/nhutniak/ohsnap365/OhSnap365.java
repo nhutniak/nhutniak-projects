@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,7 +40,8 @@ public class OhSnap365 extends Activity {
 			startActivity(Intent.createChooser(EmailIntentComposer.compose(
 											  	m_databaseActivity.getSavedUser(),
 											  	getImageCaptionEditText().getText().toString(),
-											  	getImageUri()), 
+											  	getImageUri(), 
+											  	getDatePicker()), 
 											   getString(R.string.appEmailTag)));
 
 			finish();
@@ -209,5 +211,9 @@ public class OhSnap365 extends Activity {
 	
 	private Button getSendPictureButton() {
 		return (Button) findViewById(R.id.launchEmailer);
+	}
+	
+	private DatePicker getDatePicker() {
+		return (DatePicker) findViewById(R.id.date);
 	}
 }
