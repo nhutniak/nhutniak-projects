@@ -18,6 +18,10 @@
 	href=\&quot;http://www.OhSnap365.com\&quot;&gt;www.OhSnap365.com&lt;/a&gt;
 	today if you aren\'t already a member!</string>
     
+   	<string name="titleOptions">Options</string>
+    <string name="saveOptions">Save</string>
+    <string name="cancelOptions">Cancel</string>
+    
     <string name="changeSecretword">Change secret word</string>
     <string name="useDate">Use a different date</string>
     <string name="captionChange">Change the caption</string>

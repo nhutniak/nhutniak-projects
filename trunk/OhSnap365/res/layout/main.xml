@@ -45,25 +45,6 @@
 		<TextView
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:text="@string/logintv"
-		/>
-		<EditText 
-			android:id="@+id/login" 
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content" />
-		<TextView
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:text="@string/secretwordtv"
-		/>
-		<EditText 
-			android:id="@+id/secretword" 
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content" 
-			android:password="true"	/>
-		<TextView
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
 			android:text="@string/captiontv"
 		/>
 		<EditText 
