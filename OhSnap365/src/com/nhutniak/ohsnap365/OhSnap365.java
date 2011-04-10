@@ -1,12 +1,16 @@
 package com.nhutniak.ohsnap365;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -15,6 +19,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class OhSnap365 extends Activity {
+	
+	// Identifier for the custom options dialog
+	private static final int DIALOG_OPTIONS_ID = 1;
 	
 	private DatabaseActivity m_databaseActivity;
 	
@@ -29,8 +36,6 @@ public class OhSnap365 extends Activity {
 
 		@Override
 		public void onClick(View v) {
-			m_databaseActivity.saveUserInfo(getLoginEditText().getText().toString(), getSecretWordEditText().getText().toString() );
-			
 			startActivity(Intent.createChooser(EmailIntentComposer.compose(
 											  	m_databaseActivity.getSavedUser(),
 											  	getImageCaptionEditText().getText().toString(),
@@ -62,10 +67,44 @@ public class OhSnap365 extends Activity {
 		}
 	
 		User user = m_databaseActivity.getSavedUser();
-		getLoginEditText().setText((null == user) ? "" : user.getLogin());
-		getSecretWordEditText().setText((null == user) ? "" : user.getSecretWord());
+		if( null == user )
+		{
+			// TODO: Do stuff in the future such as automatically loading the options window.
+		}
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.menu, menu);
+	    return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    case R.id.menuOptions:
+	    	showDialog(DIALOG_OPTIONS_ID);
+	        return true;
+	    default:
+	        return super.onOptionsItemSelected(item);
+	    }
+	}
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		Dialog dialog;
+		switch(id) {
+		case DIALOG_OPTIONS_ID:
+			dialog = new OptionsDialog(this, m_databaseActivity);
+			break;
+		default:
+			dialog = null;
+		}
+		return dialog;
+	}
+	
+	
 	@Override
 	public void finish() {
 		getSendPictureButton().setOnClickListener(null);
@@ -156,10 +195,6 @@ public class OhSnap365 extends Activity {
 		return (EditText) findViewById(R.id.caption);
 	}
 
-	private EditText getLoginEditText() {
-		return (EditText) findViewById(R.id.login);
-	}
-
 	private ImageView getPreviewImage() {
 		return (ImageView) findViewById(R.id.picview);
 	}
@@ -172,10 +207,6 @@ public class OhSnap365 extends Activity {
 		return ((TextView) findViewById(R.id.visitOhSnap));
 	}
 	
-	private EditText getSecretWordEditText() {
-		return (EditText) findViewById(R.id.secretword);
-	}
-
 	private Button getSendPictureButton() {
 		return (Button) findViewById(R.id.launchEmailer);
 	}
