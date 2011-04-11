@@ -11,6 +11,7 @@
     <string name="logintv">login:</string>
     <string name="secretwordtv">secret word:</string>
     <string name="captiontv">Image caption:</string>
+    <string name="datetv">Date to post:</string>
     
     <string id="@appEmailTag" name="appEmailTag">Send to OhSnap365.com using:</string>
     
@@ -18,6 +19,7 @@
 	href=\&quot;http://www.OhSnap365.com\&quot;&gt;www.OhSnap365.com&lt;/a&gt;
 	today if you aren\'t already a member!</string>
     
+    <string name="noUserMessage">No options were found.\nPlease provide your login information.</string>
    	<string name="titleOptions">Options</string>
     <string name="saveOptions">Save</string>
     <string name="cancelOptions">Cancel</string>

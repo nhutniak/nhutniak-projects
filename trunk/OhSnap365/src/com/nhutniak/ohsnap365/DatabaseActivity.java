@@ -92,4 +92,20 @@ public class DatabaseActivity {
 		}
 		return user;
 	}
+	
+	/**
+	 * Deletes all user information.  
+	 * 
+	 * NOTE: Primarily intended only for testing.
+	 */
+	void deleteAllUserInfo() {
+		try {
+			Dao<User, String> userDao = getHelper().getUserDao();
+
+			// Delete all for now
+			userDao.delete(userDao.queryForAll());
+		} catch (SQLException e) {
+			Log.e(getClass().getName(), "Could not load database", e);
+		}
+	}
 }

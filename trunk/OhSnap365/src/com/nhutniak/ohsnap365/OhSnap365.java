@@ -18,6 +18,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class OhSnap365 extends Activity {
 	
@@ -71,7 +72,16 @@ public class OhSnap365 extends Activity {
 		User user = m_databaseActivity.getSavedUser();
 		if( null == user )
 		{
-			// TODO: Do stuff in the future such as automatically loading the options window.
+			Runnable launchOptions = new Runnable() {
+				
+				@Override
+				public void run() {
+					showDialog(DIALOG_OPTIONS_ID);
+					Toast.makeText(getApplicationContext(), R.string.noUserMessage, Toast.LENGTH_SHORT).show();
+				}
+			};
+			
+			launchOptions.run();
 		}
 	}
 
