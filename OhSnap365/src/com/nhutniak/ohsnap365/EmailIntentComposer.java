@@ -1,11 +1,11 @@
 package com.nhutniak.ohsnap365;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.widget.DatePicker;
 
 /**
  * Contains logic for creating the email intent.
@@ -32,13 +32,13 @@ public class EmailIntentComposer {
 		return buff.toString();
 	}
 
-	private static String composeDateString(DatePicker picker) {
+	private static String composeDateString(Calendar calendar) {
 		Date today = new Date(System.currentTimeMillis());
-		Date pickerDate = new Date(picker.getYear()-1900, picker.getMonth(), picker.getDayOfMonth());
-		
-		if ((today.getYear() + 1900) == picker.getYear()
-				&& today.getDate() == picker.getDayOfMonth()
-				&& today.getMonth() == picker.getMonth()) 
+		Date pickerDate = new Date(calendar.get(Calendar.YEAR) - 1900, calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+
+		if (today.getYear() == pickerDate.getYear()
+				&& today.getDate() == pickerDate.getDate()
+				&& today.getMonth() == pickerDate.getMonth()) 
 		{
 			return "";
 		} else 
@@ -48,7 +48,7 @@ public class EmailIntentComposer {
 		}
 	}
 
-	public static Intent compose(User user, String caption, Uri imageUri, DatePicker date) {
+	public static Intent compose(User user, String caption, Uri imageUri, Calendar calendar) {
 		Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
 		emailIntent.setType("plain/text");
 
@@ -56,8 +56,8 @@ public class EmailIntentComposer {
 		emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, emails);
 
 		emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, caption);
-		
-		emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, composeDateString( date ) );
+
+		emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, composeDateString( calendar ) );
 
 		if (null != imageUri) {
 			emailIntent.putExtra(Intent.EXTRA_STREAM, imageUri);

@@ -3,8 +3,10 @@ package com.nhutniak.ohsnap365;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -31,13 +33,19 @@ public class OhSnap365 extends Activity {
 	// Identifier for the custom options dialog
 	private static final int DIALOG_OPTIONS_ID = 1;
 
+	// Identifier for the date picker dialog
+	private static final int DIALOG_DATE_PICKER = 2;
+	
 	// Max image size to display to avoid memory issues
 	private static final int IMAGE_MAX_SIZE = 100;
 	
 	private DatabaseActivity m_databaseActivity;
 	
+	private Calendar m_calendar;
+	
 	public OhSnap365() {
 		m_databaseActivity = new DatabaseActivity( this );
+		m_calendar = Calendar.getInstance();
 	}
 
 	/**
@@ -51,10 +59,21 @@ public class OhSnap365 extends Activity {
 											  	m_databaseActivity.getSavedUser(),
 											  	getImageCaptionEditText().getText().toString(),
 											  	getImageUri(), 
-											  	getDatePicker()), 
+											  	m_calendar), 
 											   getString(R.string.appEmailTag)));
 
 			finish();
+		}
+	};
+	
+	/**
+	 * Action to perform when the change date button is clicked.
+	 */
+	private OnClickListener m_changeDateListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			showDialog(DIALOG_DATE_PICKER);
 		}
 	};
 
@@ -66,7 +85,9 @@ public class OhSnap365 extends Activity {
 		
 		loadClickableOhSnapInfo();
 		getSendPictureButton().setOnClickListener(m_addListener);
-
+		getChangeDateButton().setOnClickListener(m_changeDateListener);
+		setDisplayDate();
+		
 		// Load the image or display "no image" information.
 		final Uri uri = getImageUri();
 		if( null != uri )
@@ -119,15 +140,31 @@ public class OhSnap365 extends Activity {
 		case DIALOG_OPTIONS_ID:
 			dialog = new OptionsDialog(this, m_databaseActivity);
 			break;
+		case DIALOG_DATE_PICKER:
+			dialog = new DatePickerDialog(this, m_dateSetListener,
+					m_calendar.get(Calendar.YEAR),
+					m_calendar.get(Calendar.MONTH),
+					m_calendar.get(Calendar.DAY_OF_MONTH));
+			break;
 		default:
 			dialog = null;
 		}
 		return dialog;
 	}
 	
+	private DatePickerDialog.OnDateSetListener m_dateSetListener = new DatePickerDialog.OnDateSetListener() {
+		
+		@Override
+		public void onDateSet(DatePicker view, int year, int monthOfYear,
+				int dayOfMonth) {
+			m_calendar.set(year, monthOfYear, dayOfMonth);
+			setDisplayDate();
+		}
+	};
 	
 	@Override
 	public void finish() {
+		getChangeDateButton().setOnClickListener(null);
 		getSendPictureButton().setOnClickListener(null);
 		m_databaseActivity.release();
 		getPreviewImage().setImageURI(null);
@@ -247,7 +284,13 @@ public class OhSnap365 extends Activity {
 		return (Button) findViewById(R.id.launchEmailer);
 	}
 	
-	private DatePicker getDatePicker() {
-		return (DatePicker) findViewById(R.id.date);
+	private void setDisplayDate() {
+		getChangeDateButton().setText( String.valueOf(m_calendar.get(Calendar.MONTH) + 1) + " / "
+										+ String.valueOf(m_calendar.get(Calendar.DAY_OF_MONTH)) + " / " 
+										+ String.valueOf(m_calendar.get(Calendar.YEAR)));
+	}
+
+	private Button getChangeDateButton() {
+		return (Button) findViewById(R.id.changeDate);
 	}
 }
