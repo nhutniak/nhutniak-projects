@@ -37,7 +37,7 @@ public class OhSnap365 extends Activity {
 	private static final int DIALOG_DATE_PICKER = 2;
 	
 	// Max image size to display to avoid memory issues
-	private static final int IMAGE_MAX_SIZE = 100;
+	private static final int IMAGE_MAX_SIZE = 400;
 	
 	private DatabaseActivity m_databaseActivity;
 	
