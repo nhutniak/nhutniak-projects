@@ -11,7 +11,7 @@
     <string name="logintv">login:</string>
     <string name="secretwordtv">secret word:</string>
     <string name="captiontv">Image caption:</string>
-    <string name="datetv">Date to post:</string>
+    <string name="datetv">Date to post: </string>
     
     <string id="@appEmailTag" name="appEmailTag">Send to OhSnap365.com using:</string>
     
