@@ -1,8 +1,14 @@
 package com.nhutniak.ohsnap365;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
@@ -24,6 +30,9 @@ public class OhSnap365 extends Activity {
 	
 	// Identifier for the custom options dialog
 	private static final int DIALOG_OPTIONS_ID = 1;
+
+	// Max image size to display to avoid memory issues
+	private static final int IMAGE_MAX_SIZE = 100;
 	
 	private DatabaseActivity m_databaseActivity;
 	
@@ -141,40 +150,55 @@ public class OhSnap365 extends Activity {
 		Runnable loadImage = new Runnable() {
 			@Override
 			public void run() {
-				String imageTag;
-				try {
-					imageTag = setPreviewImage(uri);
-				} catch (OutOfMemoryError e) {
-					// We seem to encounter memory issues if the app is
-					// launched twice one after the other due to image
-					// size. So we will attempt to clear some memory
-					// in case this occurs.
-					System.gc();
-	
-					try {
-						imageTag = setPreviewImage(uri);
-					} catch (OutOfMemoryError e2) {
-						// Could not display the image due to memory
-						// constraints
-						getPreviewImage().setImageURI(null);
-						imageTag = getString(R.string.outOfMemoryImage);
-					}
-				}
-				
-				getPreviewImageTag().setText(imageTag);
+				getPreviewImage().setImageBitmap( decodeFile( uri ) );
+				getPreviewImageTag().setText(getString(R.string.previewTag));
 				getPreviewImage().setVisibility(View.VISIBLE);
-			}
-	
-	        // TODO: this is ugly.  Fix at a later time.
-			private String setPreviewImage(final Uri uri)
-					throws OutOfMemoryError {
-				getPreviewImage().setImageURI(uri);
-				return getString(R.string.previewTag);
 			}
 		};
 		
 		getPreviewImage().postDelayed(loadImage, 100);
 	}
+	
+	/**
+	 * Decodes the URI provided and provides a scaled bitmap to the {@link #IMAGE_MAX_SIZE}.
+	 * 
+	 * @see http://stackoverflow.com/questions/477572/android-strange-out-of-memory-issue/823966#823966
+	 * 
+	 * @param uri
+	 * 		a  {@link Uri}.
+	 * @return a {@link Bitmap} or null if an error occurs.
+	 */
+	private Bitmap decodeFile( Uri uri )
+	{
+		Bitmap b = null;
+		try {
+			BitmapFactory.Options o = new BitmapFactory.Options();
+			o.inJustDecodeBounds = true;
+			
+			InputStream fis = getApplicationContext().getContentResolver().openInputStream(uri);
+			BitmapFactory.decodeStream(fis, null, o);
+	        fis.close();
+
+	        int scale = 1;
+	        if (o.outHeight > IMAGE_MAX_SIZE || o.outWidth > IMAGE_MAX_SIZE) {
+	            scale = (int) Math.pow(2, (int) Math.round(Math.log(IMAGE_MAX_SIZE / (double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
+	        }
+
+	        //Decode with inSampleSize
+	        BitmapFactory.Options o2 = new BitmapFactory.Options();
+	        o2.inSampleSize = scale;
+	        fis = getApplicationContext().getContentResolver().openInputStream(uri);
+	        b = BitmapFactory.decodeStream(fis, null, o2);
+	        fis.close();
+		} catch( FileNotFoundException e ) {
+			Log.e("decodeFile", "Could not find file: " + e);
+		} catch (IOException e) {
+			Log.e("decodeFile", "IOException occured: " + e);
+		}
+		
+		return b;
+	}
+	
 
 	/**
 	 * Attempts to find the image that is associated with the launch of the
